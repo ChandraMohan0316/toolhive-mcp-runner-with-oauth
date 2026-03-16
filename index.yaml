@@ -5,6 +5,54 @@ entries:
       artifacthub.io/changes: |
         - kind: added
           description: Initial chart release
+        - kind: fixed
+          description: Remove hook-delete-policy that was regenerating signing keys on every upgrade
+        - kind: added
+          description: Auto-generate toolhive-signing-key and toolhive-hmac-key on first install
+        - kind: added
+          description: Required value validation with clear error messages
+        - kind: fixed
+          description: Replace deprecated kubernetes.io/ingress.class annotation with spec.ingressClassName
+        - kind: added
+          description: values.yaml with safe defaults so prerequisite conditions work out of the box
+      artifacthub.io/license: Apache-2.0
+    apiVersion: v2
+    appVersion: latest
+    created: "2026-03-16T12:58:14.970996944Z"
+    dependencies:
+    - condition: prerequisites.installCRDs
+      name: toolhive-operator-crds
+      repository: oci://ghcr.io/stacklok/toolhive
+      version: 0.0.106
+    - condition: prerequisites.installOperator
+      name: toolhive-operator
+      repository: oci://ghcr.io/stacklok/toolhive
+      version: 0.5.28
+    description: 'Deploy any remote MCP server behind ToolHive''s embedded OAuth 2.0
+      / Azure AD authentication proxy on Kubernetes. Creates an MCPRemoteProxy, MCPExternalAuthConfig,
+      AWS ALB Ingress, and required Kubernetes secrets in a single Helm release. '
+    digest: 17335035c8e338a5d135f623d78dc4d1c5ac8f6ce27d8f07ed0f3e34e59e107b
+    home: https://github.com/stacklok/toolhive
+    keywords:
+    - mcp
+    - toolhive
+    - oauth2
+    - azure-ad
+    - ai
+    maintainers:
+    - email: platform@example.com
+      name: platform-engineering
+    name: toolhive-mcp
+    sources:
+    - https://github.com/stacklok/toolhive
+    type: application
+    urls:
+    - https://github.com/ChandraMohan0316/toolhive-mcp-runner-with-oauth/releases/download/toolhive-mcp-0.2.0/toolhive-mcp-0.2.0.tgz
+    version: 0.2.0
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Initial chart release
       artifacthub.io/license: Apache-2.0
     apiVersion: v2
     appVersion: latest
@@ -39,4 +87,4 @@ entries:
     urls:
     - https://github.com/ChandraMohan0316/toolhive-mcp-runner-with-oauth/releases/download/toolhive-mcp-0.1.0/toolhive-mcp-0.1.0.tgz
     version: 0.1.0
-generated: "2026-03-16T11:46:30.717235241Z"
+generated: "2026-03-16T12:58:14.971011887Z"
