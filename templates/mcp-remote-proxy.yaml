@@ -1,0 +1,53 @@
+apiVersion: toolhive.stacklok.dev/v1alpha1
+kind: MCPRemoteProxy
+metadata:
+  name: {{ include "toolhive-mcp.proxyName" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "toolhive-mcp.labels" . | nindent 4 }}
+spec:
+  remoteURL: {{ .Values.server.remoteUrl | quote }}
+  transport: streamable-http
+  proxyPort: {{ .Values.proxy.port }}
+
+  externalAuthConfigRef:
+    name: {{ include "toolhive-mcp.authConfigName" . }}
+
+  oidcConfig:
+    type: inline
+    resourceUrl: {{ include "toolhive-mcp.resourceUrl" . | quote }}
+    inline:
+      issuer: {{ include "toolhive-mcp.issuerUrl" . | quote }}
+
+  # Inject bearer token into every upstream request.
+  # The user is still required to authenticate via Azure AD — this header
+  # is only forwarded AFTER the ToolHive proxy validates the user's JWT.
+  headerForward:
+    addHeadersFromSecret:
+      - headerName: "Authorization"
+        valueSecretRef:
+          name: {{ include "toolhive-mcp.secretBearerName" . }}
+          key: token
+
+  # Allow all authenticated users to call any tool
+  authzConfig:
+    type: inline
+    inline:
+      policies:
+        - |
+          permit(
+            principal,
+            action == Action::"call_tool",
+            resource
+          );
+      entitiesJson: "[]"
+
+  resourceOverrides:
+    proxyDeployment:
+      env:
+        - name: TOOLHIVE_DEBUG
+          value: {{ .Values.proxy.debug | quote }}
+        {{- if .Values.proxy.image }}
+        - name: TOOLHIVE_PROXY_IMAGE
+          value: {{ .Values.proxy.image | quote }}
+        {{- end }}

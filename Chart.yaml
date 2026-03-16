@@ -1,0 +1,6 @@
+apiVersion: v2
+name: toolhive-mcp
+description: Generic MCP Server deployment with ToolHive auth (Azure AD via OAuth 2.0)
+type: application
+version: 0.1.0
+appVersion: "latest"

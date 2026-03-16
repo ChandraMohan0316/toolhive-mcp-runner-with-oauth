@@ -1,0 +1,37 @@
+apiVersion: toolhive.stacklok.dev/v1alpha1
+kind: MCPExternalAuthConfig
+metadata:
+  name: {{ include "toolhive-mcp.authConfigName" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "toolhive-mcp.labels" . | nindent 4 }}
+spec:
+  type: embeddedAuthServer
+  embeddedAuthServer:
+    issuer: {{ include "toolhive-mcp.issuerUrl" . | quote }}
+
+    signingKeySecretRefs:
+      - name: toolhive-signing-key
+        key: private-key
+
+    hmacSecretRefs:
+      - name: toolhive-hmac-key
+        key: hmac-key
+
+    tokenLifespans:
+      accessTokenLifespan: {{ .Values.oauth.accessTokenLifespan | quote }}
+      refreshTokenLifespan: {{ .Values.oauth.refreshTokenLifespan | quote }}
+      authCodeLifespan: {{ .Values.oauth.authCodeLifespan | quote }}
+
+    upstreamProviders:
+      - name: azure-ad
+        type: oidc
+        oidcConfig:
+          issuerUrl: {{ include "toolhive-mcp.azureIssuerUrl" . | quote }}
+          clientId: {{ .Values.oauth.azure.clientId | quote }}
+          clientSecretRef:
+            name: {{ include "toolhive-mcp.secretAzureName" . }}
+            key: client-secret
+          redirectUri: {{ include "toolhive-mcp.redirectUri" . | quote }}
+          scopes:
+            {{- toYaml .Values.oauth.azure.scopes | nindent 12 }}

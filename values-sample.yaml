@@ -1,0 +1,73 @@
+# =============================================================================
+# toolhive-mcp — Generic MCP Server Helm Chart
+# =============================================================================
+# Deploys a ToolHive MCPRemoteProxy in front of any remote MCP server.
+# Azure AD auth is enforced by ToolHive — users must authenticate before
+# any request reaches the upstream. The bearer token is injected by the
+# proxy into upstream requests only and is never exposed to clients.
+#
+# Usage:
+#   helm install <release-name> ./helm/toolhive-mcp \
+#     -f my-values.yaml \
+#     --set server.bearerToken="<token>" \
+#     --set oauth.azure.clientSecret="<secret>"
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# MCP Server (upstream remote)
+# -----------------------------------------------------------------------------
+server:
+  # URL of the remote MCP server the proxy will forward requests to
+  # GitHub hosted:  https://api.githubcopilot.com/mcp/
+  # Self-hosted:    https://my-mcp-server.internal/mcp
+  remoteUrl: "https://api.githubcopilot.com/mcp/"
+
+  # Bearer token forwarded by the proxy to the upstream MCP server.
+  # This is ONLY injected on the proxy→upstream leg — clients never see it.
+  # The value is stored as a Kubernetes Secret.
+  # Use --set in production.
+  bearerToken: "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# -----------------------------------------------------------------------------
+# Ingress / Public hostname
+# -----------------------------------------------------------------------------
+ingress:
+  host: "mcp-github.example.internal"
+  certificateArn: "arn:aws:acm:us-east-1:123456789012:certificate/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  idleTimeoutSeconds: 3600
+  scheme: internet-facing
+
+# -----------------------------------------------------------------------------
+# OAuth — ToolHive Embedded Auth Server (Azure AD upstream)
+# -----------------------------------------------------------------------------
+oauth:
+  accessTokenLifespan: "1h"
+  refreshTokenLifespan: "168h"
+  authCodeLifespan: "10m"
+
+  azure:
+    tenantId: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    clientId: "bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
+    clientSecret: "your-client-secret-here"   # Use --set in production
+    scopes:
+      - openid
+      - profile
+      - email
+
+# -----------------------------------------------------------------------------
+# ToolHive Proxy
+# -----------------------------------------------------------------------------
+proxy:
+  # Upstream public ToolHive proxy runner image:
+  #   ghcr.io/stacklok/toolhive/proxyrunner:latest
+  #
+  # Private ECR mirror (Xylem — includes content-length fix required for
+  # streaming MCP over ALB):
+  image: "853973692277.dkr.ecr.us-east-1.amazonaws.com/toolhive-proxyrunner:fixed-content-length-v16"
+  port: 8080
+  debug: false
+
+# -----------------------------------------------------------------------------
+# Namespace
+# -----------------------------------------------------------------------------
+namespace: toolhive

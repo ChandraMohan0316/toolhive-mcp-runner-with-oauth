@@ -1,0 +1,32 @@
+{{- $host := include "toolhive-mcp.host" . -}}
+========================================================================
+{{ .Release.Name }} — MCP Server Deployment Notes
+========================================================================
+
+1. MCP Server URL:
+   https://{{ $host }}/mcp
+
+2. Add to your MCP client config:
+   {
+     "{{ .Release.Name }}": {
+       "type": "http",
+       "url": "https://{{ $host }}/mcp"
+     }
+   }
+
+3. OAuth issuer:
+   https://{{ $host }}
+
+4. Azure AD App redirect URI (must be registered):
+   https://{{ $host }}/oauth/callback
+
+========================================================================
+Prerequisites (must exist before install):
+  kubectl create secret generic toolhive-signing-key \
+    --from-literal=private-key="$(openssl genrsa 2048)" \
+    -n {{ .Values.namespace }}
+
+  kubectl create secret generic toolhive-hmac-key \
+    --from-literal=hmac-key="$(openssl rand -hex 32)" \
+    -n {{ .Values.namespace }}
+========================================================================
