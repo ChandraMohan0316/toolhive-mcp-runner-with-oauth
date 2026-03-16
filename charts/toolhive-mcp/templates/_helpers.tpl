@@ -1,4 +1,22 @@
 {{/*
+Validate required values — fail fast with a clear message rather than
+rendering a broken manifest.
+*/}}
+{{/*
+Validate required values — fail fast with a clear message rather than
+rendering a broken manifest.  Call with: {{ include "toolhive-mcp.validate" . }}
+*/}}
+{{- define "toolhive-mcp.validate" -}}
+{{- $_ := required "values: server.remoteUrl is required" .Values.server.remoteUrl -}}
+{{- $_ := required "values: server.bearerToken is required" .Values.server.bearerToken -}}
+{{- $_ := required "values: ingress.host is required" .Values.ingress.host -}}
+{{- $_ := required "values: ingress.certificateArn is required" .Values.ingress.certificateArn -}}
+{{- $_ := required "values: oauth.azure.tenantId is required" .Values.oauth.azure.tenantId -}}
+{{- $_ := required "values: oauth.azure.clientId is required" .Values.oauth.azure.clientId -}}
+{{- $_ := required "values: oauth.azure.clientSecret is required" .Values.oauth.azure.clientSecret -}}
+{{- end }}
+
+{{/*
 All resource names are prefixed with .Release.Name to avoid conflicts
 with other deployments in the same namespace.
 */}}

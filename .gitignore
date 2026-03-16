@@ -1,4 +1,5 @@
-values.yaml
+# Root-level values file contains real credentials — never commit
+/values.yaml
 
 # chart-releaser working directories
 .cr-release-packages/

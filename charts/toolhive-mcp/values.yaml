@@ -1,0 +1,67 @@
+# =============================================================================
+# toolhive-mcp — Default values
+# Override with: helm install <name> toolhive-mcp/toolhive-mcp -f my-values.yaml
+# Required fields (no default) must be provided via -f or --set.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# MCP Server (upstream remote) — REQUIRED
+# -----------------------------------------------------------------------------
+server:
+  remoteUrl: ""       # e.g. https://api.githubcopilot.com/mcp/
+  bearerToken: ""     # injected only on proxy→upstream leg; never seen by clients
+
+# -----------------------------------------------------------------------------
+# Ingress / Public hostname — REQUIRED
+# -----------------------------------------------------------------------------
+ingress:
+  host: ""            # e.g. mcp.example.com  (no https:// prefix needed)
+  certificateArn: ""  # ACM cert ARN for the target hostname
+  idleTimeoutSeconds: 3600
+  scheme: internet-facing   # internet-facing | internal
+
+# -----------------------------------------------------------------------------
+# OAuth — ToolHive Embedded Auth Server (Azure AD upstream) — REQUIRED
+# -----------------------------------------------------------------------------
+oauth:
+  accessTokenLifespan: "1h"
+  refreshTokenLifespan: "168h"
+  authCodeLifespan: "10m"
+
+  azure:
+    tenantId: ""      # Azure AD tenant ID
+    clientId: ""      # Azure AD app (client) ID
+    clientSecret: ""  # Azure AD app secret  — use --set in production
+    scopes:
+      - openid
+      - profile
+      - email
+
+# -----------------------------------------------------------------------------
+# ToolHive Proxy
+# -----------------------------------------------------------------------------
+proxy:
+  # Public upstream image.  Override with a private mirror if needed.
+  image: "ghcr.io/stacklok/toolhive/proxyrunner:latest"
+  port: 8080
+  debug: false
+
+# -----------------------------------------------------------------------------
+# Namespace
+# -----------------------------------------------------------------------------
+namespace: toolhive
+
+# -----------------------------------------------------------------------------
+# Prerequisites
+# Set individual flags to false if the component is already in the cluster.
+# -----------------------------------------------------------------------------
+prerequisites:
+  # Install ToolHive CRDs (MCPRemoteProxy, MCPExternalAuthConfig, etc.)
+  installCRDs: true
+
+  # Install the ToolHive Operator into toolhive-system namespace.
+  installOperator: true
+
+  # Auto-generate toolhive-signing-key (RSA) and toolhive-hmac-key (HMAC).
+  # Keys are generated on first install and preserved on every upgrade.
+  createSigningSecrets: true

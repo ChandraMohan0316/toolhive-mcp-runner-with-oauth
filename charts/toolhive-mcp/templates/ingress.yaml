@@ -6,7 +6,6 @@ metadata:
   labels:
     {{- include "toolhive-mcp.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: {{ .Values.ingress.scheme }}
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
@@ -17,6 +16,7 @@ metadata:
     alb.ingress.kubernetes.io/success-codes: "200,404"
     alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds={{ .Values.ingress.idleTimeoutSeconds }}
 spec:
+  ingressClassName: alb
   rules:
     - host: {{ include "toolhive-mcp.host" . }}
       http:

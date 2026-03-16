@@ -9,7 +9,7 @@ type: application
 
 # Bump version on every change to templates or values.
 # appVersion tracks the ToolHive proxy runner image tag.
-version: 0.1.0
+version: 0.2.0
 appVersion: "latest"
 
 keywords:
@@ -47,4 +47,14 @@ annotations:
   artifacthub.io/changes: |
     - kind: added
       description: Initial chart release
+    - kind: fixed
+      description: Remove hook-delete-policy that was regenerating signing keys on every upgrade
+    - kind: added
+      description: Auto-generate toolhive-signing-key and toolhive-hmac-key on first install
+    - kind: added
+      description: Required value validation with clear error messages
+    - kind: fixed
+      description: Replace deprecated kubernetes.io/ingress.class annotation with spec.ingressClassName
+    - kind: added
+      description: values.yaml with safe defaults so prerequisite conditions work out of the box
   artifacthub.io/license: Apache-2.0

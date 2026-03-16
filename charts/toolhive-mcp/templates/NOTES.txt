@@ -1,32 +1,28 @@
 {{- $host := include "toolhive-mcp.host" . -}}
 ========================================================================
-{{ .Release.Name }} — MCP Server Deployment Notes
+{{ .Release.Name }} — MCP Server deployed
 ========================================================================
 
-1. MCP Server URL:
-   https://{{ $host }}/mcp
+MCP Server URL:
+  https://{{ $host }}/mcp
 
-2. Add to your MCP client config:
-   {
-     "{{ .Release.Name }}": {
-       "type": "http",
-       "url": "https://{{ $host }}/mcp"
-     }
-   }
+Add to your MCP client config (~/.claude.json or .mcp.json):
+  {
+    "{{ .Release.Name }}": {
+      "type": "http",
+      "url": "https://{{ $host }}/mcp"
+    }
+  }
 
-3. OAuth issuer:
-   https://{{ $host }}
+OAuth issuer:     https://{{ $host }}
+Redirect URI:     https://{{ $host }}/oauth/callback
+  → Register this URI in your Azure AD app registration.
 
-4. Azure AD App redirect URI (must be registered):
-   https://{{ $host }}/oauth/callback
-
-========================================================================
-Prerequisites (must exist before install):
-  kubectl create secret generic toolhive-signing-key \
-    --from-literal=private-key="$(openssl genrsa 2048)" \
-    -n {{ .Values.namespace }}
-
-  kubectl create secret generic toolhive-hmac-key \
-    --from-literal=hmac-key="$(openssl rand -hex 32)" \
-    -n {{ .Values.namespace }}
+------------------------------------------------------------------------
+Post-install checklist:
+  [ ] DNS: CNAME {{ $host }} → ALB hostname
+        kubectl get ingress {{ .Release.Name }}-ingress -n {{ .Values.namespace }} \
+          -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+  [ ] Azure AD: add redirect URI https://{{ $host }}/oauth/callback
+  [ ] Wait ~2-3 min for ALB target health check to pass
 ========================================================================
