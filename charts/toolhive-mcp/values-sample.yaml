@@ -71,3 +71,21 @@ proxy:
 # Namespace
 # -----------------------------------------------------------------------------
 namespace: toolhive
+
+# -----------------------------------------------------------------------------
+# Prerequisites
+# Set to false for any component already present in the cluster.
+# -----------------------------------------------------------------------------
+prerequisites:
+  # Install ToolHive CRDs (MCPRemoteProxy, MCPExternalAuthConfig, etc.)
+  # Disable if CRDs were installed separately or by a prior release.
+  installCRDs: true
+
+  # Install the ToolHive Operator into toolhive-system namespace.
+  # Disable if the operator is already running in the cluster.
+  installOperator: true
+
+  # Auto-create toolhive-signing-key and toolhive-hmac-key Secrets.
+  # Keys are generated on first install and preserved on upgrades.
+  # Disable if you create the secrets manually.
+  createSigningSecrets: true

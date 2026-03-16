@@ -28,6 +28,21 @@ maintainers:
   - name: platform-engineering
     email: platform@example.com
 
+dependencies:
+  # ToolHive CRDs — must be installed before the operator and this chart.
+  # Disable if CRDs are already present in the cluster.
+  - name: toolhive-operator-crds
+    version: "0.0.106"
+    repository: "oci://ghcr.io/stacklok/toolhive"
+    condition: prerequisites.installCRDs
+
+  # ToolHive Operator — manages MCPRemoteProxy / MCPExternalAuthConfig resources.
+  # Disable if the operator is already running in the cluster.
+  - name: toolhive-operator
+    version: "0.5.28"
+    repository: "oci://ghcr.io/stacklok/toolhive"
+    condition: prerequisites.installOperator
+
 annotations:
   artifacthub.io/changes: |
     - kind: added
