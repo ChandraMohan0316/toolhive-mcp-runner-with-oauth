@@ -1,0 +1,35 @@
+apiVersion: v2
+name: toolhive-mcp
+description: >
+  Deploy any remote MCP server behind ToolHive's embedded OAuth 2.0 / Azure AD
+  authentication proxy on Kubernetes. Creates an MCPRemoteProxy,
+  MCPExternalAuthConfig, AWS ALB Ingress, and required Kubernetes secrets in a
+  single Helm release.
+type: application
+
+# Bump version on every change to templates or values.
+# appVersion tracks the ToolHive proxy runner image tag.
+version: 0.1.0
+appVersion: "latest"
+
+keywords:
+  - mcp
+  - toolhive
+  - oauth2
+  - azure-ad
+  - ai
+
+home: https://github.com/stacklok/toolhive
+
+sources:
+  - https://github.com/stacklok/toolhive
+
+maintainers:
+  - name: platform-engineering
+    email: platform@example.com
+
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Initial chart release
+  artifacthub.io/license: Apache-2.0

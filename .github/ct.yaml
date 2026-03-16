@@ -1,0 +1,11 @@
+# chart-testing configuration
+# https://github.com/helm/chart-testing
+
+charts-dir: charts
+
+# Only lint – skip install (chart requires ToolHive Operator, AWS ALB Controller,
+# and EKS which are not available in CI runners).
+lint-conf: .github/lintconf.yaml
+
+# Fail on lint warnings as well as errors.
+validate-maintainers: false

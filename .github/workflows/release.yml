@@ -1,0 +1,40 @@
+name: Release Charts
+
+# Manually triggered from GitHub Actions UI (Actions → Release Charts → Run workflow).
+# chart-releaser packages each chart under charts/, creates a GitHub Release,
+# and updates index.yaml on the gh-pages branch.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Package and publish Helm charts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history required by chart-releaser
+
+      - name: Configure Git identity
+        run: |
+          git config user.name  "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        with:
+          charts_dir: charts      # sub-directories containing Chart.yaml
+          skip_existing: true     # idempotent – safe to re-run
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

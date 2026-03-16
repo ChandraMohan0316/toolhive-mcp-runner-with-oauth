@@ -1,0 +1,6 @@
+# Helm lint rules applied by chart-testing.
+# Reference: https://github.com/helm/helm/blob/main/pkg/lint/rules
+
+rules:
+  # Require chart version to be semver-compatible.
+  version-constraint: ""

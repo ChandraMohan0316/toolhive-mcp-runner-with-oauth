@@ -1,0 +1,58 @@
+name: Lint and Validate Charts
+
+# Runs on every PR that touches chart files.
+on:
+  pull_request:
+    paths:
+      - "charts/**"
+      - ".github/ct.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Helm lint & template validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+      - name: Detect changed charts
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --config .github/ct.yaml --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Lint changed charts
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct lint --config .github/ct.yaml
+
+      - name: Helm template smoke-test
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          for chart in charts/*/; do
+            echo "=== Templating $chart ==="
+            helm template test "$chart" \
+              --values "$chart/values-sample.yaml" \
+              --set server.bearerToken=dummy-token \
+              --set oauth.azure.clientSecret=dummy-secret \
+              --set oauth.azure.tenantId=dummy-tenant \
+              --set oauth.azure.clientId=dummy-client \
+              --set ingress.host=mcp.example.com \
+              --set ingress.certificateArn="arn:aws:acm:us-east-1:000000000000:certificate/dummy" \
+              --debug > /dev/null
+          done

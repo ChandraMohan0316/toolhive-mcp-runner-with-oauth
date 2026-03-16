@@ -1,1 +1,5 @@
 values.yaml
+
+# chart-releaser working directories
+.cr-release-packages/
+.cr-index/
