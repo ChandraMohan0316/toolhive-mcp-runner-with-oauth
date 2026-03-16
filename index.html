@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>toolhive-mcp Helm Chart Repository</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 760px; margin: 60px auto; padding: 0 24px; color: #24292f; }
+    h1   { font-size: 1.6rem; border-bottom: 1px solid #d0d7de; padding-bottom: 12px; }
+    pre  { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; padding: 16px; overflow-x: auto; font-size: 0.85rem; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    a    { color: #0969da; }
+    .badge { display: inline-block; background: #0969da; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; text-decoration: none; margin-left: 8px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <h1>toolhive-mcp <a class="badge" href="https://github.com/ChandraMohan0316/toolhive-mcp-runner-with-oauth">GitHub</a></h1>
+  <p>
+    Helm chart for deploying any remote MCP server behind
+    <a href="https://github.com/stacklok/toolhive">ToolHive</a>'s embedded
+    OAuth 2.0 / Azure AD authentication proxy on Kubernetes (EKS + AWS ALB).
+  </p>
+
+  <h2>Install</h2>
+  <pre><code>helm repo add toolhive-mcp https://chandramohan0316.github.io/toolhive-mcp-runner-with-oauth
+helm repo update
+helm install &lt;release-name&gt; toolhive-mcp/toolhive-mcp \
+  -n toolhive \
+  -f my-values.yaml \
+  --set server.bearerToken="&lt;token&gt;" \
+  --set oauth.azure.clientSecret="&lt;secret&gt;"</code></pre>
+
+  <h2>Available Charts</h2>
+  <table>
+    <thead><tr><th>Chart</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>toolhive-mcp/toolhive-mcp</code></td>
+        <td>Deploy a remote MCP server with ToolHive Azure AD auth proxy</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    See the <a href="https://github.com/ChandraMohan0316/toolhive-mcp-runner-with-oauth#readme">README</a>
+    for full configuration options and deployment steps.
+  </p>
+  <p style="font-size:0.8rem; color:#57606a;">
+    Helm index: <a href="./index.yaml">index.yaml</a>
+  </p>
+</body>
+</html>
