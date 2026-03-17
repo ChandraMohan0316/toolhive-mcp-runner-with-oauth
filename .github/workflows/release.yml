@@ -1,10 +1,19 @@
 name: Release Charts
 
-# Manually triggered from GitHub Actions UI (Actions → Release Charts → Run workflow).
+# Triggers:
+#   - push to main when chart files change (standard CD — bump Chart.yaml version to cut a release)
+#   - workflow_dispatch for manual releases from the GitHub Actions UI
+#
 # chart-releaser packages each chart under charts/, creates a GitHub Release,
 # and updates index.yaml on the gh-pages branch.
+# skip_existing: true makes it idempotent — re-running with the same version is safe.
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "charts/**"
   workflow_dispatch:
 
 permissions:

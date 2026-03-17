@@ -4,3 +4,4 @@
 # chart-releaser working directories
 .cr-release-packages/
 .cr-index/
+DEPLOYMENT.md
